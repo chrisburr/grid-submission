@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/awk BEGIN{a=ARGV[1];sub(/[a-z_.]+$/,".miniconda/bin/python",a);system(a"\t"ARGV[1])}
 """Wrap (and simplify) the most used DIRAC commands for easier use."""
 
 from __future__ import print_function
@@ -103,4 +103,3 @@ def get_job_output(job_id, output_folder):
     return os.path.join(output_folder, str(job_id))
 
 # EOF
-
