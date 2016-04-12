@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
+PYTHON="$BASE_DIR/.miniconda/bin/python"
+
+$PYTHON $BASE_DIR/grid.py "$@"

@@ -1,4 +1,4 @@
-#!/usr/bin/awk BEGIN{a=ARGV[1];sub(/[a-z_.]+$/,".miniconda/bin/python",a);system(a"\t"ARGV[1])}
+#!/usr/bin/env python2
 
 from __future__ import print_function
 
@@ -183,4 +183,4 @@ if __name__ == '__main__':
     gevent.joinall(tasks)
     submitting_group.join()
     monitoring_group.join()
-    downloading_groupt.join()
+    downloading_group.join()
