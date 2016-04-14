@@ -17,12 +17,12 @@ import leveldb
 # TODO(chrisburr) There must be a better way
 from DIRAC.Core.Base import Script
 Script.parseCommandLine(ignoreErrors=False)  # NOQA
-from DIRAC.Interfaces.API.Job import Job
 
 # Setup the database
 WORKDIR = os.getcwd()  # NOQA
 db = leveldb.LevelDB(os.path.join(WORKDIR, 'jobs.db'))  # NOQA
 
+from . import applications
 from .ui import start_ui
 from .workers import start_workers, submit
 
@@ -31,5 +31,5 @@ __all__ = [
     start_ui,
     start_workers,
     submit,
-    Job,
+    applications
 ]

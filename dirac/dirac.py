@@ -38,9 +38,11 @@ def get_job_output(job_id, output_folder):
 
 _dirac = Dirac()
 submit = _dirac.submit
+status = _dirac.status
 
 __all__ = [
     submit,
+    status,
     get_job_output,
     DiracException
 ]

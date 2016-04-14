@@ -18,7 +18,7 @@ def submit_worker():
     while True:
         j = submitting_queue.get()
         print('Submitting job')
-        resp = dirac.submit(j)
+        resp = dirac.submit(j._prepare_and_get_job_object())
         jid = resp['JobID']
 
         obj = {'jid': jid,
