@@ -4,6 +4,7 @@ import shutil
 
 import gevent
 
+from . import applications
 from . import db
 from . import dirac
 from . import WORKDIR
@@ -18,8 +19,10 @@ def submit_worker():
     while True:
         j = submitting_queue.get()
         print('Submitting job')
-        resp = dirac.submit(j._prepare_and_get_job_object())
-        jid = resp['JobID']
+        dirac_job = j._as_dirac_job() if isinstance(j, applications.Job) else j
+        response = dirac.submit(dirac_job)
+
+        jid = response['JobID']
 
         obj = {'jid': jid,
                'status': 'Submitted',

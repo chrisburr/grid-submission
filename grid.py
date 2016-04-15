@@ -5,10 +5,11 @@ import argparse
 
 
 def submit_command(args):
-    from dirac import applications, submit
+    from dirac import applications, submit, GridFile
 
     SUBMISSION_ENVIRONMENT = {
         'Job': applications.Job,
+        'GridFile': GridFile,
         'GaussJob': applications.GaussJob,
         'BooleJob': applications.BooleJob,
         'MooreJob': applications.MooreJob,

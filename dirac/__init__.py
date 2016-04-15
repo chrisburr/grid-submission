@@ -23,11 +23,13 @@ WORKDIR = os.getcwd()  # NOQA
 db = leveldb.LevelDB(os.path.join(WORKDIR, 'jobs.db'))  # NOQA
 
 from . import applications
+from .dirac import GridFile
 from .ui import start_ui
 from .workers import start_workers, submit
 
 
 __all__ = [
+    GridFile,
     start_ui,
     start_workers,
     submit,

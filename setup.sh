@@ -14,5 +14,5 @@ $TMP_DIR/Miniconda2-latest-Linux-x86_64.sh -b -p $CONDA_INSTALL_DIR
 rm -r $TMP_DIR
 
 # Install dependencies
-$CONDA_INSTALL_DIR/bin/conda install -y gevent
+$CONDA_INSTALL_DIR/bin/conda install -y gevent six
 /usr/bin/yes | $CONDA_INSTALL_DIR/bin/python -m pip install leveldb
