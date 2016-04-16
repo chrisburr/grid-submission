@@ -4,12 +4,6 @@ import os
 from DIRAC.Interfaces.API.Dirac import Dirac
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
 
-from LHCbDIRAC.Core.Utilities import File
-# The guid calculated using File.makeGuid might be incorrect if ROOT is not
-# available so import ROOT now instead
-# TODO Handle this possibility in a more graceful fashion
-import ROOT  # NOQA
-
 
 class DiracException(Exception):
     """Exception in a call to the DIRAC API."""
@@ -26,6 +20,10 @@ class GridFile(object):
         self._check_response(resp)
 
     def upload(self, path, storage_element, guid=None):
+        from LHCbDIRAC.Core.Utilities import File
+        # The guid calculated using File.makeGuid might be incorrect if ROOT is not
+        # available so import ROOT now instead
+        # TODO Handle this possibility in a more graceful fashion
         if guid is None:
             guid = File.makeGuid(path)[path]
         resp = _dirac.addFile(self._lfn, path, storage_element, fileGuid=guid)

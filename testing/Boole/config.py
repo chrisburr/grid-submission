@@ -21,4 +21,4 @@ OUTPUT_DIR = os.path.expanduser(
 )
 DDDB_XML_PATH = None
 DETECTORS = ['VP', 'UT', 'FT', 'Magnet']
-OUTPUT_SUFFIX = 'VP_{EVENT_TYPE}_spillover={ENABLE_SPILLOVER}'
+OUTPUT_SUFFIX = 'VP_{EVENT_TYPE}_with_spillover_{ENABLE_SPILLOVER}'

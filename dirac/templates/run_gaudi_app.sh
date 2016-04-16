@@ -6,3 +6,6 @@ set -u
 
 tar -czf boole_sandbox.tar.gz *
 lb-run {app_name} {version} gaudirun.py {options} || true
+ls -R
+env
+tree

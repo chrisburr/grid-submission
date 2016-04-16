@@ -76,6 +76,8 @@ class Job(object):
 
     @input_data.setter
     def input_data(self, lfns):
+        if isinstance(lfns, string_types):
+            lfns = [lfns]
         self._input_data = lfns
 
     @property
