@@ -1,19 +1,9 @@
 import os
-import shutil
 import tempfile
 
 from six import string_types
 
-from .dirac import GridFile
-
-
-EXECUTABLE_SCRIPT = (
-    '#!/usr/bin/env bash\n'
-    'set -e\n'
-    'source /cvmfs/lhcb.cern.ch/lib/LbLogin.sh\n'
-    'tar -czf boole_sandbox.tar.gz *\n'
-    'lb-run {app_name} {version} gaudirun.py {options}\n'
-)
+from . import templates
 
 
 class Job(object):
@@ -118,33 +108,37 @@ class Job(object):
 class GaudiJob(Job):
     _app_name = 'Gaudi'
 
-    def __init__(self, version=None):
-        self._version = version or ''
+    def __init__(self, version='latest'):
+        self._version = version
         self._options_files = []
 
         super(GaudiJob, self).__init__()
 
     def _as_dirac_job(self):
         tmp_dir = tempfile.mkdtemp(prefix='tmp_grid-submission_')
+        # TODO Copy the opject to prevet modifying this one
+        # TODO Ensure the user doesn't try to add multiple files with the same name
 
-        # TODO Ensure the user doesn't try to add a folder called '_options'
-        options_dir = os.path.join(tmp_dir, '_options')
-        os.makedirs(options_dir)
-        staged_options = []
-        for fn in self._options:
-            shutil.copy(fn, options_dir)
-            staged_options.append(os.path.join('_options', os.path.basename(fn)))
+        # Create an options file to make gaudi run over the requested data
+        if self.input_data:
+            add_input_options = os.path.join(tmp_dir, 'add_input_data.py')
+            with open(add_input_options, 'wt') as f:
+                f.write(templates.add_gaudi_input_data.format(
+                    lfns="',\n    '".join(self.input_data)
+                ))
+            self._options.append(add_input_options)
 
-        # TODO Make the job fail if this script fails
+        # Add the options to the sandbox
+        self.input_sandbox.extend(self._options)
+
         executable_filename = os.path.join(tmp_dir, 'job_script.sh')
         with open(executable_filename, 'wt') as f:
-            f.write(EXECUTABLE_SCRIPT.format(
+            f.write(templates.run_gaudi_app.format(
                 app_name=self._app_name,
                 version=self._version,
-                options=' '.join(staged_options)
+                options=' '.join(map(os.path.basename, self._options))
             ))
         self._executable = [executable_filename]
-        self.input_sandbox.append(options_dir)
 
         dirac_job = super(GaudiJob, self)._as_dirac_job()
 

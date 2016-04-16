@@ -4,6 +4,12 @@ import os
 from DIRAC.Interfaces.API.Dirac import Dirac
 from LHCbDIRAC.Interfaces.API.DiracLHCb import DiracLHCb
 
+from LHCbDIRAC.Core.Utilities import File
+# The guid calculated using File.makeGuid might be incorrect if ROOT is not
+# available so import ROOT now instead
+# TODO Handle this possibility in a more graceful fashion
+import ROOT  # NOQA
+
 
 class DiracException(Exception):
     """Exception in a call to the DIRAC API."""
@@ -16,28 +22,30 @@ class GridFile(object):
 
     def download(self, destination=None):
         self._load_attributes()
-        response = _dirac.getFile(self._lfn, destination or os.getcwd())
-        self._check_response(response)
+        resp = _dirac.getFile(self._lfn, destination or os.getcwd())
+        self._check_response(resp)
 
     def upload(self, path, storage_element, guid=None):
-        response = _dirac.addFile(self._lfn, path, storage_element, fileGuid=guid)
-        self._check_response(response)
+        if guid is None:
+            guid = File.makeGuid(path)[path]
+        resp = _dirac.addFile(self._lfn, path, storage_element, fileGuid=guid)
+        self._check_response(resp)
 
     def remove(self):
         self._load_attributes()
-        response = _dirac.removeFile(self._lfn)
-        self._check_response(response)
+        resp = _dirac.removeFile(self._lfn)
+        self._check_response(resp)
         # Reset this objects proerties
         self._loaded = False
 
     def replicate(self, destination, source=''):
         self._load_attributes()
-        response = _dirac.replicate(
+        resp = _dirac.replicate(
             self._lfn,
             destinationSE=destination,
             sourceSE=source
         )
-        self._check_response(response)
+        self._check_response(resp)
 
     @property
     def lfn(self):
@@ -68,13 +76,13 @@ class GridFile(object):
             return
 
         # TODO Consider using getAllReplicas
-        response = _dirac.getReplicas(self._lfn)
-        self._check_response(response)
-        self._replicas = response['Value']['Successful'][self._lfn]
+        resp = _dirac.getReplicas(self._lfn)
+        self._check_response(resp)
+        self._replicas = resp['Value']['Successful'][self._lfn]
 
-        response = _dirac.getLfnMetadata(self._lfn)
-        self._check_response(response)
-        self._guid = response['Value']['Successful'][self._lfn]['GUID']
+        resp = _dirac.getLfnMetadata(self._lfn)
+        self._check_response(resp)
+        self._guid = resp['Value']['Successful'][self._lfn]['GUID']
 
         self._loaded = True
 
